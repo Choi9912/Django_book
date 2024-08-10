@@ -1,0 +1,18 @@
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<link rel="stylesheet" type='text/css' href="{% static 'accounts/login.css' %}">
+
+    <div id="wrap">
+        <div class="right-wrap">
+            <h3>{% trans "로그인" %}</h3>
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">{% trans "로그인" %}</button>
+            </form>
+            <p>{% trans "계정이 없으신가요?" %} <a href="{% url 'signup' %}">{% trans "회원가입" %}</a></p>
+        </div>
+    </div>
+{% endblock %}

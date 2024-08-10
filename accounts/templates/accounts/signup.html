@@ -1,0 +1,36 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}회원가입{% endblock %}</title>
+    <link rel="stylesheet" type='text/css' href="{% static 'accounts/signup.css' %}">
+</head>
+<body>
+    <div id="wrap">
+        <div class="right-wrap">
+            <h1>{% trans "회원가입" %}</h1>
+            <p>{% trans "이미 계정이 있으신가요?" %} <a href="{% url 'login' %}">{% trans "로그인" %}</a></p>
+            <form method="POST" action="{% url 'signup' %}">
+                {% csrf_token %}
+                <label for="id_username">{% trans "사용자 이름:" %}</label>
+                {{ form.username }}
+
+                <label for="id_email">Email:</label>
+                {{ form.email }}
+
+                <label for="id_password1">{% trans "비밀번호:" %}</label>
+                {{ form.password1 }}
+
+                <label for="id_password2">{% trans "비밀번호 확인:" %}</label>
+                {{ form.password2 }}
+
+                <button type="submit">{% trans "회원가입" %}</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

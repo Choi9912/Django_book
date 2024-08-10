@@ -1,0 +1,80 @@
+/* accounts/static/accounts/signup.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e8f5e9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#wrap {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.right-wrap h1 {
+    color: #388e3c;
+    margin-bottom: 20px;
+}
+
+.right-wrap p {
+    margin-bottom: 20px;
+    color: #777;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+form label {
+    margin-top: 10px;
+    font-weight: bold;
+    align-self: flex-start;
+}
+
+form input[type="text"], form input[type="password"], form input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+form button {
+    width: 100%;
+    background-color: #388e3c;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+form button:hover {
+    background-color: #2e7d32;
+}
+
+a {
+    color: #388e3c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
