@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
+from django.db.models import F, Sum
+from django.urls import reverse
 
 from shop.forms import OrderForm
-from shop.models import Cart, Category,  Product
+from shop.models import Cart, Category, Product, Order
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -47,8 +48,13 @@ def product_detail(request, pk):
 def cart(request, pk):
     categories = Category.objects.all()
     user = User.objects.get(pk=pk)
-    cart = Cart.objects.filter(user=user)
-    paginator = Paginator(cart, 10)
+    cart_items = Cart.objects.filter(user=user)
+    
+    # 총 금액 계산 (페이지네이션 이전)
+    total_amount = cart_items.aggregate(total=Sum(F('products__price') * F('quantity')))['total'] or 0
+    
+    # 페이지네이션
+    paginator = Paginator(cart_items, 10)
     page = request.GET.get('page')
     try:
         cart = paginator.page(page)
@@ -56,7 +62,13 @@ def cart(request, pk):
         cart = paginator.page(1)
     except EmptyPage:
         cart = paginator.page(paginator.num_pages)
-    context = {'user': user, 'cart': cart, 'categories': categories}
+    
+    context = {
+        'user': user, 
+        'cart': cart, 
+        'categories': categories,
+        'total_amount': total_amount
+    }
     return render(request, 'shop/cart.html', context)
 
 @login_required
@@ -127,4 +139,38 @@ def pay(request, pk):
             'product': product,
             'categories': categories,
         })
+    
+@login_required
+def cart_checkout(request, pk):
+    user = User.objects.get(pk=pk)
+    cart_items = Cart.objects.filter(user=user)
+    categories = Category.objects.all()
+
+    if request.method == 'POST':
+        total_amount = cart_items.aggregate(total=Sum(F('products__price') * F('quantity')))['total'] or 0
         
+        # 각 카트 아이템에 대해 주문 생성
+        for item in cart_items:
+            Order.objects.create(
+                user=user,
+                products=item.products,
+                quantity=item.quantity,
+                amount=item.products.price * item.quantity
+            )
+        
+        # 카트 비우기
+        cart_items.delete()
+        
+        messages.success(request, "주문이 성공적으로 완료되었습니다.")
+        return redirect('shop:order_list', user.pk)
+
+    total_amount = cart_items.aggregate(total=Sum(F('products__price') * F('quantity')))['total'] or 0
+    
+    context = {
+        'cart_items': cart_items,
+        'total_amount': total_amount,
+        'iamport_shop_id': 'iamport',
+        'user': user,
+        'categories': categories,
+    }
+    return render(request, 'shop/cart_checkout.html', context)

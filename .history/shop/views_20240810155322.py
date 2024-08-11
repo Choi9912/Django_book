@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from django.db.models import F
+from django.db.models import F, Sum
+from django.urls import reverse
 
 from shop.forms import OrderForm
-from shop.models import Cart, Category,  Product
+from shop.models import Cart, Category, Product, Order
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -56,7 +57,16 @@ def cart(request, pk):
         cart = paginator.page(1)
     except EmptyPage:
         cart = paginator.page(paginator.num_pages)
-    context = {'user': user, 'cart': cart, 'categories': categories}
+    
+    # 카트 내 총 금액 계산
+    total_amount = cart.aggregate(total=Sum(F('products__price') * F('quantity')))['total'] or 0
+    
+    context = {
+        'user': user, 
+        'cart': cart, 
+        'categories': categories,
+        'total_amount': total_amount
+    }
     return render(request, 'shop/cart.html', context)
 
 @login_required
@@ -127,4 +137,3 @@ def pay(request, pk):
             'product': product,
             'categories': categories,
         })
-        

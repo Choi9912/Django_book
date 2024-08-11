@@ -127,4 +127,3 @@ def pay(request, pk):
             'product': product,
             'categories': categories,
         })
-        

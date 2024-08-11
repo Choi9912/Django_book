@@ -127,4 +127,34 @@ def pay(request, pk):
             'product': product,
             'categories': categories,
         })
+    
+
+@login_required
+def cart_checkout(request):
+    if request.method == 'POST':
+        user = request.user
+        cart_items = Cart.objects.filter(user=user)
         
+        if not cart_items:
+            messages.error(request, "Your cart is empty.")
+            return redirect('shop:cart', user.pk)
+        
+        total_amount = sum(item.products.price * item.quantity for item in cart_items)
+        
+        # Create an order for each cart item
+        for cart_item in cart_items:
+            Order.objects.create(
+                user=user,
+                name=cart_item.products.name,
+                amount=cart_item.products.price * cart_item.quantity,
+                quantity=cart_item.quantity,
+                products=cart_item.products
+            )
+        
+        # Clear the cart after creating orders
+        cart_items.delete()
+        
+        messages.success(request, f"Orders placed successfully. Total amount: {total_amount}")
+        return redirect('shop:order_list', user.pk)
+    
+    return redirect('shop:cart', request.user.pk)

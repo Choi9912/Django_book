@@ -53,7 +53,7 @@
                             <button type="submit">+ ADD SHOPPING CART</button>
                         </form>
 
-                        <form action="{% url 'shop:pay' product.pk %}" method="post">
+                        <form action="{% url 'shop:buy_now' product.pk %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="quantity" id="buy_quantity">
                             <button type="submit">BUY IT NOW</button>

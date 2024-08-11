@@ -100,7 +100,7 @@ def add_to_cart(request, pk): # section 4
         return redirect("shop:cart", user.pk)
     
 @login_required
-def pay(request, pk):
+def buy_now(request, pk):
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity'))
         product = Product.objects.get(pk=pk)
@@ -127,4 +127,3 @@ def pay(request, pk):
             'product': product,
             'categories': categories,
         })
-        
