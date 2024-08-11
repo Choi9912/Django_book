@@ -31,19 +31,19 @@ def show_category(request, category_id):
     context = {'lank_products': lank_products, 'products': products, 'category': category, 'categories': categories}
     return render(request, 'shop/category.html', context)
 
-def product_detail(request, pk):
+def product_detail(request, product_id):
     categories = Category.objects.all()
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(Product, pk=product_id)
     category = get_object_or_404(Category, pk=product.category.pk)
-    Product.objects.filter(pk=pk).update(hit=F('hit') + 1)
+    Product.objects.filter(pk=product_id).update(hit=F('hit') + 1)
     quantity_list = list(range(1, product.quantity))
     context = {"quantity_list": quantity_list, "product": product, "category": category, "categories": categories}
     return render(request, 'shop/product_detail.html', context)
 
 @login_required
-def cart(request, pk):
+def cart(request, user_id):
     categories = Category.objects.all()
-    user = get_object_or_404(User, pk=pk)
+    user = get_object_or_404(User, pk=user_id)
     cart_items = Cart.objects.filter(user=user)
     paginator = Paginator(cart_items, 10)
     page = request.GET.get('page')
@@ -57,7 +57,7 @@ def cart(request, pk):
     return render(request, 'shop/cart.html', context)
 
 @login_required
-def delete_cart(request, pk):  # cart 내에서 상품을 지우는 함수
+def delete_cart(request, product_id):  # cart 내에서 상품을 지우는 함수
     user = request.user
     cart_items = Cart.objects.filter(user=user)
     quantity = 0
@@ -67,21 +67,22 @@ def delete_cart(request, pk):  # cart 내에서 상품을 지우는 함수
         if not check_none:
             return redirect("shop:cart", user.pk)
 
-        pk = int(request.POST.get("product"))
-        product = get_object_or_404(Product, pk=pk)
+        product_id = int(request.POST.get("product"))
+        product = get_object_or_404(Product, pk=product_id)
         for item in cart_items:
             if item.products == product:
                 quantity = item.quantity
 
         if quantity > 0:
-            Cart.objects.filter(user=user, products=product).delete()
+            cart_item = Cart.objects.filter(user=user, products=product)
+            cart_item.delete()
             return redirect("shop:cart", user.pk)
 
-@login_required
-def add_to_cart(request, pk):  # 장바구니에 상품 추가
+@login_required  # 장바구니에 상품 추가
+def add_to_cart(request, product_id):
     if request.method == "POST":
         quantity = int(request.POST.get("quantity"))
-        product = get_object_or_404(Product, pk=pk)
+        product = get_object_or_404(Product, pk=product_id)
         user = request.user
 
         cart_item = Cart.objects.filter(user=user, products=product)
@@ -92,12 +93,12 @@ def add_to_cart(request, pk):  # 장바구니에 상품 추가
 
         messages.success(request, "Added to cart successfully.")
         return redirect("shop:cart", user.pk)
-
+    
 @login_required
-def pay(request, pk):
+def pay(request, product_id):
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity'))
-        product = get_object_or_404(Product, pk=pk)
+        product = get_object_or_404(Product, pk=product_id)
         user = request.user
         categories = Category.objects.all()
         initial = {'name': product.name, 'amount': product.price, 'quantity': quantity}

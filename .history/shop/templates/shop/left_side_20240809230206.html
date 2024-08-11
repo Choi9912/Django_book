@@ -42,7 +42,7 @@
             <div class="side-category">
                 <ul>
                     {% for category in categories %}
-                        <li><a href="{% url 'shop:show_category' category.pk %}">{{ category.name }}</a></li>
+                        <li><a href="{% url 'shop:show_category' category.pk %}">{{ category.sort }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
