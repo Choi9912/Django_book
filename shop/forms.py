@@ -1,6 +1,7 @@
 from django import forms
 from .models import Product, Order
 
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -13,6 +14,7 @@ class ProductForm(forms.ModelForm):
             'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
 
 class OrderForm(forms.ModelForm):
     class Meta:
