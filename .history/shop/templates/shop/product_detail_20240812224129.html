@@ -60,7 +60,29 @@
                     <div>SOLD OUT</div>
                     {% endif %}
                 </div>
+                
                 </div>
+    
+                <div class="payment">
+                    <div class="btnArea">
+                        {% if product.quantity > 0 %}
+                            <form action="{% url 'shop:add_to_cart' product.pk %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" id="cart_quantity">
+                                <button type="submit">+ ADD SHOPPING CART</button>
+                            </form>
+    
+                            <form action="{% url 'shop:buy_now' product.pk %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" id="buy_quantity">
+                                <button type="submit">BUY IT NOW</button>
+                            </form>
+                        {% else %}
+                            <button disabled>SOLD OUT</button>
+                        {% endif %}
+                    </div>
+                </div>
+    
                 {% if message %}
                     <div>
                         {{ message }}
