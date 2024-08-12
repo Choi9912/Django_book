@@ -27,9 +27,11 @@ def index(request):
     categories = Category.objects.all()
     ranked_products = products.order_by('-hit')[:4]
 
-    context = {"products": products, 
-               "categories": categories,
-                "ranked_products": ranked_products,}
+    context = {
+        "products": products,
+        "categories": categories,
+        "ranked_products": ranked_products,
+    }
 
     return render(request, "shop/index.html", context)
 
@@ -79,6 +81,7 @@ def view_cart(request, pk):
     categories = Category.objects.all()
     user = User.objects.get(pk=pk)
     cart_list = Cart.objects.filter(user=user)
+    cart_sum = sum(map(lambda item: item.quantity * item.products.price, cart_list))
 
     page = int(request.GET.get('page', 1))
     paginator = Paginator(cart_list, 10)
@@ -87,7 +90,8 @@ def view_cart(request, pk):
     context = {
         "user": user,
         "cart": cart,
-        "categories": categories
+        "categories": categories,
+        "cart_sum": cart_sum,
     }
 
     return render(request, 'shop/cart.html', context)
