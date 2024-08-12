@@ -30,9 +30,6 @@ def index(request):
         "categories": categories,
         "products": products,
     }
-    products = Product.objects.order_by("-pub_date")
-    categories = Category.objects.all()
-    context = {"products": products, "categories": categories}
 
     return render(request, "shop/index.html", context)
 
@@ -136,15 +133,11 @@ def pay(request, pk):
         user = request.user
         categories = Category.objects.all()
 
-
         initial = {
             "name": product.name,
             "amount": product.price,
             "quantity": quantity
         }
-
-        initial = {"name": product.name, "amount": product.price, "quantity": quantity}
-
 
         form = OrderForm(request.POST, initial=initial)
         if form.is_valid():
@@ -157,7 +150,6 @@ def pay(request, pk):
         else:
             form = OrderForm(initial=initial)
 
-
         context = {
             'form': form,
             'quantity': quantity,
@@ -168,17 +160,3 @@ def pay(request, pk):
         }
 
         return render(request, 'shop/order_pay.html', context)
-
-        return render(
-            request,
-            "shop/order_pay.html",
-            {
-                "form": form,
-                "quantity": quantity,
-                "iamport_shop_id": "iamport",
-                "user": user,
-                "product": product,
-                "categories": categories,
-            },
-        )
-
