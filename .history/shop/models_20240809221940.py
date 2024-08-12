@@ -2,13 +2,12 @@ from django.conf import settings
 from django.db import models
 from sorl.thumbnail import ImageField
 
-
 class Category(models.Model):
-    name = models.CharField(max_length=255)
+    sort = models.CharField(max_length=255)
 
     def __str__(self):
-        return '{}'.format(self.name)
-
+        return '{}'.format(self.sort)
+    
 class Product(models.Model):
     name = models.CharField(max_length=255)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -32,7 +31,6 @@ class Cart(models.Model):
 
     def __str__(self):
         return '{} // {}'.format(self.user, self.products.name)
-
 
 class Order(models.Model):
     user = models.ForeignKey(

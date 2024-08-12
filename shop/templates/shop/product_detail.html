@@ -36,6 +36,7 @@
                     </table>
     
                     {% if product.quantity > 0 %}
+
                     <div>
                         <label for="quantity">수량</label>
                         <select id="quantity" name="quantity">
@@ -44,6 +45,17 @@
                             {% endfor %}
                         </select>
                     </div>
+                        <form action="{% url 'shop:add_to_cart' product.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" id="cart_quantity">
+                            <button type="submit">+ ADD SHOPPING CART</button>
+                        </form>
+
+                        <form action="{% url 'shop:pay' product.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" id="buy_quantity">
+                            <button type="submit">BUY IT NOW</button>
+                        </form>
                     {% else %}
                     <div>SOLD OUT</div>
                     {% endif %}
