@@ -45,7 +45,7 @@ def show_category(request, category_id):
     ranked_products = products.order_by('-hit')[:4]
     
     page = int(request.GET.get('page', 1))
-    paginator = Paginator(sorted_products, 5)
+    paginator = Paginator(sorted_products, 8)
     products = paginator.page(page)
 
     context = {
