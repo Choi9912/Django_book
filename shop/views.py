@@ -81,7 +81,7 @@ def view_cart(request, pk):
     categories = Category.objects.all()
     user = User.objects.get(pk=pk)
     cart_list = Cart.objects.filter(user=user)
-    cart_sum = sum(map(lambda item: item.quantity * item.products.price, cart_list))
+    item_price_sum = sum(map(lambda item: item.quantity * item.products.price, cart_list))
 
     page = int(request.GET.get('page', 1))
     paginator = Paginator(cart_list, 10)
@@ -91,7 +91,7 @@ def view_cart(request, pk):
         "user": user,
         "cart": cart,
         "categories": categories,
-        "cart_sum": cart_sum,
+        "item_price_sum": item_price_sum,
     }
 
     return render(request, 'shop/cart.html', context)
