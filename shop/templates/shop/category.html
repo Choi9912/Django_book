@@ -57,11 +57,13 @@
                                 {% thumbnail product.image "240x240" crop="center" as im %}
                                     <a href="{% url 'shop:product_detail' product.pk %}">
                                         <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}">
+                                        <p>{{ product.name }}</p>
                                     </a>
                                 {% endthumbnail %}
                             {% else %}
                                 <a href="{% url 'shop:product_detail' product.pk %}">
                                     <img src="{% static 'shop/images/slide-img1.jpg' %}" width="240" height="240" alt="{{ product.name }}">
+                                    <p>{{ product.name }}</p>
                                 </a>
                             {% endif %}
                         </div>

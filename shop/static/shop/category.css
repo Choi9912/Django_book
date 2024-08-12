@@ -45,6 +45,11 @@
     color: #495057;
 }
 
+.recommend_list h3, .nomal_list h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #495057;
+}
 .product_list {
     list-style: none;
     padding: 0;
@@ -79,7 +84,13 @@
     margin-top: 10px;
 }
 
-.product_list .box .name a {
+.product_list .box a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.product_list .box .name p {
     text-decoration: none;
     color: #007bff;
     font-weight: bold;
@@ -88,6 +99,7 @@
 .product_list .box .name a:hover {
     color: #0056b3;
 }
+
 
 .board_paging {
     text-align: center;

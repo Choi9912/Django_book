@@ -97,5 +97,8 @@ p {
 }
 
 .slide_item p {
-    margin: 5px 0;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
 }
+
