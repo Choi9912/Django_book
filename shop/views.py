@@ -58,7 +58,6 @@ def show_category(request, category_id):
 
 
 def product_detail(request, product_id):
-    # FIXME(김동현) product의 카테고리가 외래 키로 참조되어 있으니 쓸모없는 쿼리는 안하는게 낫습니다. 확인 후 지우세요.
     categories = Category.objects.all()
     product = get_object_or_404(Product, id=product_id)
 

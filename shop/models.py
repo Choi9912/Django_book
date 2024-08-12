@@ -7,7 +7,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'name: {self.name}'
+        return '{}'.format(self.name)
 
 
 class Product(models.Model):
@@ -21,49 +21,29 @@ class Product(models.Model):
     hit = models.IntegerField(default=0)
 
     def __str__(self):
-        return f'name, publish date: {self.name}, {self.pub_date}'
+        return '{} {}'.format(self.name, self.pub_date)
     
 
 class Cart(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
-    products = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-        related_name='wish_product',
-        blank=True
-    )
+        on_delete=models.CASCADE, )
+    products = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wish_product', blank=True)
     quantity = models.IntegerField(default=1)
 
     def __str__(self):
-        return f'user, product name: {self.user}, {self.products.name}'
+        return '{} // {}'.format(self.user, self.products.name)
 
 
 class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
-    name = models.CharField(
-        max_length=100,
-        verbose_name='상품명'
-    )
-    amount = models.PositiveIntegerField(
-        verbose_name='결제금액'
-    )
-    quantity = models.IntegerField(
-        default=1
-    )
-    products = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-        related_name='order_product'
-    )
-    order_date = models.DateTimeField(
-        auto_now_add=True
-    )
+        on_delete=models.CASCADE, )
+    name = models.CharField(max_length=100, verbose_name='상품명')
+    amount = models.PositiveIntegerField(verbose_name='결제금액')
+    quantity = models.IntegerField(default=1)
+    products = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_product')
+    order_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-id',)
