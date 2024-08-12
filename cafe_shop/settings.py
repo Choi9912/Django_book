@@ -141,5 +141,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'  # 로그아웃 후 리다이렉트될 URL
