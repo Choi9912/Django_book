@@ -82,12 +82,12 @@
             IMP.init('{{ iamport_shop_id }}');
             IMP.request_pay(params, function(response_data) {
                 console.log('response_data :', response_data);
-                if ( ! response_data.success ) {
+                if ( !response_data.success ) {
                     alert(response_data.error_msg + "(" + response_data.error_code + ")");
                     location.href = '{% url "shop:index" %}';
                 }
                 else {
-                     $.each(response_data, function(key, vlaue) {
+                    $.each(response_data, function(key, vlaue) {
                         $form.find("input[name=" + key + "]").val(value);
                     });
                     $form.submit();
