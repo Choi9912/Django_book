@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load static %}
+    <link rel="stylesheet" type='text/css' href="{% static 'shop/left_side.css' %}">
+
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-space">
+            <header class="page-header wrapper">
+                <h1 class="logo">
+                    <a href="/">
+                        <img src="{% static 'shop/images/weniv.jpg' %}" alt="Logo">
+                    </a>
+                </h1>
+            </header>
+        </div>
+        <div class="sidebar-content">
+    <div class="account">
+        <ul>
+            {% if user.is_authenticated %}
+                <!-- 사용자 로그인 상태일 때 표시할 항목 -->
+                <li>
+                    <form action="{% url 'logout' %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
+                            LOGOUT
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form action="{% url 'shop:cart' user.pk %}" method="POST" style="display: inline;">
+                        <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
+                            CART
+                        </button>
+                    </form>
+                </li>
+            {% else %}
+                <!-- 사용자 비로그인 상태일 때 표시할 항목 -->
+                <li>
+                    <form action="{% url 'login' %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
+                            LOGIN
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form action="{% url 'signup' %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+
+                        <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
+                            SIGN UP
+                        </button>
+                    </form>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+    </div>
+</body>
+</html>

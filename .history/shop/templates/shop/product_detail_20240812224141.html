@@ -1,0 +1,94 @@
+{% extends "shop/../accounts/base.html" %}
+
+{% block title %} 
+    DETAIL 
+{% endblock title %}
+
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" type='text/css' href="{% static 'shop/product_detail.css' %}">
+
+    <div class="content">
+        <div class="detailArea">
+            <div class="product_img_area">
+                <div class="key_img">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="300">
+                </div>
+            </div>
+    
+            <div class="infoArea">
+                <h3>{{ product.name }}</h3>
+    
+                <div class="detailinfo">
+                    {{ product.description }}
+                </div>
+    
+                <div class="detail_payment">
+                    <table>
+                        <tr>
+                            <td>PRICE</td>
+                            <td><strong>{{ product.price }} 원</strong></td>
+                        </tr>
+                        <tr>
+                            <td>POINT</td>
+                            <td><strong>{{ point }} 원</strong></td>
+                        </tr>
+                    </table>
+                <div class="payment">
+                    <div class="btnArea">
+                    {% if product.quantity > 0 %}
+                    <div>
+                        <label for="quantity">수량</label>
+                        <select id="quantity" name="quantity">
+                            {% for quantity in quantity_list %}
+                                <option value="{{ quantity }}">{{ quantity }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                        <form action="{% url 'shop:add_to_cart' product.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" id="cart_quantity">
+                            <button type="submit">+ ADD SHOPPING CART</button>
+                        </form>
+
+                        <form action="{% url 'shop:pay' product.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" id="buy_quantity">
+                            <button type="submit">BUY IT NOW</button>
+                        </form>
+                    {% else %}
+                    <div>SOLD OUT</div>
+                    {% endif %}
+                </div>
+
+                </div>
+    
+                {% if message %}
+                    <div>
+                        {{ message }}
+                        <a href="{% url 'shop:cart' user.pk %}">장바구니로 이동</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // var X -> 되도록 const 그래도 안되면 let
+            let quantitySelect = document.getElementById('quantity');
+            let cartQuantityInput = document.getElementById('cart_quantity');
+            let buyQuantityInput = document.getElementById('buy_quantity');
+    
+            quantitySelect.addEventListener('change', function() {
+                cartQuantityInput.value = this.value;
+                buyQuantityInput.value = this.value;
+            });
+    
+            // Set initial values
+            cartQuantityInput.value = quantitySelect.value;
+            buyQuantityInput.value = quantitySelect.value;
+        });
+    </script>
+
+{% endblock content %}
