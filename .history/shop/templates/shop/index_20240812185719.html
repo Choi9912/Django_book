@@ -22,17 +22,14 @@
             <div class="wrapper">
                 <h2><span>- MAIN MENU -</span></h2>
                 <div class="slide_item">
+                    <!-- 데이터가 출력되는지 확인 -->
                     <ul>
-                        {% for product in products|dictsortreversed:"hit"|slice:":4" %} 
+                        {% for product in lank_products %}
                             <li>
-                                <a href="{% url 'shop:product_detail' product.pk %}">
-                                    {% thumbnail product.image "200x200" crop="center" as im %}
-                                        <div><img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}"></div>
-                                    {% endthumbnail %}
-                                    <p>{{ product.name }}</p>
-                                    <p>조회수: {{ product.hit }}</p>
-                                </a>
+                                {{ product.name }} - 조회수: {{ product.hit }}
                             </li>
+                        {% empty %}
+                            <li>상위 제품이 없습니다.</li>
                         {% endfor %}
                     </ul>
 

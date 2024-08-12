@@ -19,7 +19,7 @@ body {
     background-image: url("{% static 'shop/images/main-bg.jpg' %}");
     background-size: cover;
     background-position: center;
-    height: 50vh;
+    height: 10vh;
     display: flex;
     align-items: center;
     justify-content: center;

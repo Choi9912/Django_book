@@ -1,4 +1,3 @@
-/* General Styles */
 body {
     font-family: 'Lobster', cursive, 'Arial', sans-serif;
     margin: 0;
@@ -16,50 +15,44 @@ body {
 
 /* Page Header */
 #home {
-    background-image: url("{% static 'shop/images/main-bg.jpg' %}");
+    background-image: url('https://example.com/cafe-bg.jpg'); /* Replace with a cafe-themed background image URL */
     background-size: cover;
     background-position: center;
-    height: 50vh;
+    height: 30vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: #fff;
     position: relative;
+    z-index: 1;
 }
 
-#home .overlay {
+#home::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 어두운 오버레이 추가 */
-    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5); /* Add a dark overlay for better text visibility */
+    z-index: -1;
 }
 
 .home-content {
-    position: relative;
-    z-index: 2;
     max-width: 700px;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.8); /* 반투명 배경 추가 */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .page-title {
     font-size: 3.5rem;
     margin-bottom: 20px;
     font-weight: bold;
-    color: #3e2723; /* 따뜻한 브라운 계열 색상 */
 }
 
 p {
     font-size: 1.4rem;
     margin: 20px 0;
-    color: #4e342e; /* 텍스트 색상을 약간 더 따뜻하게 */
 }
 
 /* Weekly Best Products Slider */

@@ -4,23 +4,23 @@ from .models import Product, Order
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'category', 'image', 'price', 'quantity', 'description']
+        fields = ['menu', 'category', 'image', 'price', 'stock', 'detail']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'menu': forms.TextInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'detail': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['name', 'amount', 'quantity']
+        fields = ['menu', 'amount', 'stock']
         widgets = {
-            'name': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'menu': forms.TextInput(attrs={'readonly': 'readonly'}),
             'amount': forms.TextInput(attrs={'readonly': 'readonly'}),
-            'quantity': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'stock': forms.TextInput(attrs={'readonly': 'readonly'}),
         }

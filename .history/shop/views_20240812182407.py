@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.db.models import F
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
@@ -9,38 +8,25 @@ from shop.forms import OrderForm
 from shop.models import Cart, Category, Product
 from django.contrib.auth.models import User
 
-
-PRODUCTS_PER_PAGE = 4
+PRODUCTS_PER_PAGE = 5
 CART_ITEMS_PER_PAGE = 10
 
-
-def paginate_queryset(paginator, page):
-    try:
-        return paginator.page(page)
-    except PageNotAnInteger:
-        return paginator.page(1)
-    except EmptyPage:
-        return paginator.page(paginator.num_pages)
-
-
 def index(request):
-    products = Product.objects.order_by('-pub_date')
+    products = Product.objects.order_by('-pub_date')  # pub_date를 기준으로 정렬
     categories = Category.objects.all()
-    
     context = {
         'products': products,
         'categories': categories
     }
     return render(request, 'shop/index.html', context)
 
-
 def show_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    products = Product.objects.filter(category=category).order_by('pub_date')
-    # 현재 안되는 부분 
-    lank_products = Product.objects.filter(category=category).order_by('-hit')[:4]
+    products = Product.objects.filter(category=category).order_by('pub_date')  # pub_date를 기준으로 정렬
+    lank_products = Product.objects.filter(category=category).order_by('-hit')[:4]  # hit을 기준으로 정렬
     paginator = Paginator(products, PRODUCTS_PER_PAGE)
     page = request.GET.get('page')
+    
     products = paginate_queryset(paginator, page)
     
     context = {
@@ -51,13 +37,11 @@ def show_category(request, category_id):
     }
     return render(request, 'shop/category.html', context)
 
-
-
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     category = get_object_or_404(Category, pk=product.category.pk)
-    Product.objects.filter(pk=pk).update(hit=F('hit') + 1)
-    quantity_list = list(range(1, product.quantity))
+    Product.objects.filter(pk=pk).update(hit=F('hit') + 1)  # hit 카운트 증가
+    quantity_list = list(range(1, product.stock + 1))  # stock을 기준으로 수량 리스트 생성
     context = {
         'quantity_list': quantity_list,
         'product': product,
@@ -65,7 +49,6 @@ def product_detail(request, pk):
         'categories': Category.objects.all()
     }
     return render(request, 'shop/product_detail.html', context)
-
 
 @login_required
 def cart(request, pk):
@@ -83,7 +66,6 @@ def cart(request, pk):
     }
     return render(request, 'shop/cart.html', context)
 
-
 @login_required
 def delete_cart(request, pk):
     user = request.user
@@ -93,9 +75,8 @@ def delete_cart(request, pk):
             return redirect("shop:cart", user.pk)
 
         product = get_object_or_404(Product, pk=int(product_id))
-        Cart.objects.filter(user=user, products=product).delete()
+        Cart.objects.filter(user=user, product=product).delete()  # product 필드로 필터링
         return redirect("shop:cart", user.pk)
-
 
 @login_required
 def add_to_cart(request, pk):
@@ -104,7 +85,7 @@ def add_to_cart(request, pk):
         product = get_object_or_404(Product, pk=pk)
         user = request.user
 
-        cart_item, created = Cart.objects.get_or_create(user=user, products=product)
+        cart_item, created = Cart.objects.get_or_create(user=user, product=product)  # product 필드 사용
         if not created:
             cart_item.quantity = F("quantity") + quantity
             cart_item.save()
@@ -115,7 +96,6 @@ def add_to_cart(request, pk):
         messages.success(request, "Added to cart successfully.")
         return redirect("shop:cart", user.pk)
 
-
 @login_required
 def pay(request, pk):
     if request.method == 'POST':
@@ -123,7 +103,7 @@ def pay(request, pk):
         product = get_object_or_404(Product, pk=pk)
         user = request.user
         initial = {
-            'name': product.name,
+            'name': product.menu,  # 상품명을 'menu'로 사용
             'amount': product.price,
             'quantity': quantity
         }
@@ -132,8 +112,8 @@ def pay(request, pk):
         if form.is_valid():
             order = form.save(commit=False)
             order.user = user
-            order.quantity = quantity
-            order.products = product
+            order.quantity = quantity  # quantity 필드 사용
+            order.product = product  # product 필드 사용
             order.save()
             return redirect('shop:order_list', user.pk)
         
@@ -146,3 +126,10 @@ def pay(request, pk):
             'categories': Category.objects.all()
         })
 
+def paginate_queryset(paginator, page):
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(paginator.num_pages)

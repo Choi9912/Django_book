@@ -1,46 +1,35 @@
 from django.contrib import messages
-from django.db.models import F
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from shop.forms import OrderForm
 from shop.models import Cart, Category, Product
 from django.contrib.auth.models import User
 
-
-PRODUCTS_PER_PAGE = 4
+# Constants
+PRODUCTS_PER_PAGE = 5
 CART_ITEMS_PER_PAGE = 10
 
-
-def paginate_queryset(paginator, page):
-    try:
-        return paginator.page(page)
-    except PageNotAnInteger:
-        return paginator.page(1)
-    except EmptyPage:
-        return paginator.page(paginator.num_pages)
-
-
 def index(request):
+    """Render the homepage with the latest products and categories."""
     products = Product.objects.order_by('-pub_date')
     categories = Category.objects.all()
-    
     context = {
         'products': products,
         'categories': categories
     }
     return render(request, 'shop/index.html', context)
 
-
 def show_category(request, category_id):
+    """Render a page showing products in a specific category."""
     category = get_object_or_404(Category, pk=category_id)
     products = Product.objects.filter(category=category).order_by('pub_date')
-    # 현재 안되는 부분 
     lank_products = Product.objects.filter(category=category).order_by('-hit')[:4]
     paginator = Paginator(products, PRODUCTS_PER_PAGE)
     page = request.GET.get('page')
+    
     products = paginate_queryset(paginator, page)
     
     context = {
@@ -51,9 +40,8 @@ def show_category(request, category_id):
     }
     return render(request, 'shop/category.html', context)
 
-
-
 def product_detail(request, pk):
+    """Render the detail page for a specific product."""
     product = get_object_or_404(Product, pk=pk)
     category = get_object_or_404(Category, pk=product.category.pk)
     Product.objects.filter(pk=pk).update(hit=F('hit') + 1)
@@ -66,9 +54,9 @@ def product_detail(request, pk):
     }
     return render(request, 'shop/product_detail.html', context)
 
-
 @login_required
 def cart(request, pk):
+    """Render the user's cart page with paginated cart items."""
     user = get_object_or_404(User, pk=pk)
     cart_items = Cart.objects.filter(user=user)
     paginator = Paginator(cart_items, CART_ITEMS_PER_PAGE)
@@ -83,9 +71,9 @@ def cart(request, pk):
     }
     return render(request, 'shop/cart.html', context)
 
-
 @login_required
 def delete_cart(request, pk):
+    """Remove a product from the user's cart."""
     user = request.user
     if request.method == "POST":
         product_id = request.POST.get("product")
@@ -96,9 +84,9 @@ def delete_cart(request, pk):
         Cart.objects.filter(user=user, products=product).delete()
         return redirect("shop:cart", user.pk)
 
-
 @login_required
 def add_to_cart(request, pk):
+    """Add a product to the user's cart or update its quantity."""
     if request.method == "POST":
         quantity = int(request.POST.get("quantity"))
         product = get_object_or_404(Product, pk=pk)
@@ -115,9 +103,9 @@ def add_to_cart(request, pk):
         messages.success(request, "Added to cart successfully.")
         return redirect("shop:cart", user.pk)
 
-
 @login_required
 def pay(request, pk):
+    """Handle the payment process for an order."""
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity'))
         product = get_object_or_404(Product, pk=pk)
@@ -146,3 +134,11 @@ def pay(request, pk):
             'categories': Category.objects.all()
         })
 
+def paginate_queryset(paginator, page):
+    """Helper function to handle pagination."""
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(paginator.num_pages)

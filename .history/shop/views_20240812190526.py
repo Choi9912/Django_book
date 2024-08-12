@@ -13,16 +13,6 @@ from django.contrib.auth.models import User
 PRODUCTS_PER_PAGE = 4
 CART_ITEMS_PER_PAGE = 10
 
-
-def paginate_queryset(paginator, page):
-    try:
-        return paginator.page(page)
-    except PageNotAnInteger:
-        return paginator.page(1)
-    except EmptyPage:
-        return paginator.page(paginator.num_pages)
-
-
 def index(request):
     products = Product.objects.order_by('-pub_date')
     categories = Category.objects.all()
@@ -37,19 +27,27 @@ def index(request):
 def show_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     products = Product.objects.filter(category=category).order_by('pub_date')
-    # 현재 안되는 부분 
-    lank_products = Product.objects.filter(category=category).order_by('-hit')[:4]
+    top_products = Product.objects.filter(category=category).order_by('-hit')[:4]
     paginator = Paginator(products, PRODUCTS_PER_PAGE)
     page = request.GET.get('page')
     products = paginate_queryset(paginator, page)
     
     context = {
-        'lank_products': lank_products,
+        'top_products': top_products,
         'products': products,
         'category': category,
         'categories': Category.objects.all()
     }
     return render(request, 'shop/category.html', context)
+
+def paginate_queryset(paginator, page):
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(paginator.num_pages)
+
 
 
 
@@ -146,3 +144,11 @@ def pay(request, pk):
             'categories': Category.objects.all()
         })
 
+
+def paginate_queryset(paginator, page):
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(paginator.num_pages)

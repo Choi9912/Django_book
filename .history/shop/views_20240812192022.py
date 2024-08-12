@@ -13,16 +13,6 @@ from django.contrib.auth.models import User
 PRODUCTS_PER_PAGE = 4
 CART_ITEMS_PER_PAGE = 10
 
-
-def paginate_queryset(paginator, page):
-    try:
-        return paginator.page(page)
-    except PageNotAnInteger:
-        return paginator.page(1)
-    except EmptyPage:
-        return paginator.page(paginator.num_pages)
-
-
 def index(request):
     products = Product.objects.order_by('-pub_date')
     categories = Category.objects.all()
@@ -146,3 +136,11 @@ def pay(request, pk):
             'categories': Category.objects.all()
         })
 
+
+def paginate_queryset(paginator, page):
+    try:
+        return paginator.page(page)
+    except PageNotAnInteger:
+        return paginator.page(1)
+    except EmptyPage:
+        return paginator.page(paginator.num_pages)

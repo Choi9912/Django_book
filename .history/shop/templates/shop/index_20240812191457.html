@@ -22,10 +22,11 @@
             <div class="wrapper">
                 <h2><span>- MAIN MENU -</span></h2>
                 <div class="slide_item">
+                {% if lank_products %}
                     <ul>
-                        {% for product in products|dictsortreversed:"hit"|slice:":4" %} 
+                        {% for product in lank_products %}
                             <li>
-                                <a href="{% url 'shop:product_detail' product.pk %}">
+                                <a href="{% url 'shop:show_category' product.pk %}">
                                     {% thumbnail product.image "200x200" crop="center" as im %}
                                         <div><img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.name }}"></div>
                                     {% endthumbnail %}
@@ -35,7 +36,10 @@
                             </li>
                         {% endfor %}
                     </ul>
-
+                {% else %}
+                    <p>No top products available.</p>
+                {% endif %}
+                
                 </div>                
             </div>
         </div>

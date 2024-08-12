@@ -16,7 +16,7 @@ body {
 
 /* Page Header */
 #home {
-    background-image: url("{% static 'shop/images/main-bg.jpg' %}");
+    background-image: url("{% static '../images/main-bg.jpg' %}");
     background-size: cover;
     background-position: center;
     height: 50vh;

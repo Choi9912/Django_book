@@ -14,7 +14,6 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
-
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
