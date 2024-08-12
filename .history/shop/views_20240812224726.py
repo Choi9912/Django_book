@@ -32,11 +32,7 @@ def index(request):
     }
     products = Product.objects.order_by("-pub_date")
     categories = Category.objects.all()
-    ranked_products = products.order_by('-hit')[:4]
-
-    context = {"products": products, 
-               "categories": categories,
-                "ranked_products": ranked_products,}
+    context = {"products": products, "categories": categories}
 
     return render(request, "shop/index.html", context)
 
@@ -53,11 +49,12 @@ def show_category(request, category_id):
     paginator = Paginator(sorted_products, 5)
     products = paginator.page(page)
 
+    # TODO: 랭킹 할 때는 rank입니다. html 부분 수정 필요.
     context = {
         "categories": categories,
         "category": category,
         "products": products,
-        "ranked_products": ranked_products,
+        "lank_products": ranked_products,
     }
 
     return render(request, "shop/category.html", context)

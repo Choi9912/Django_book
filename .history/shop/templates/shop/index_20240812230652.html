@@ -23,7 +23,7 @@
                 <h2><span>- MAIN MENU -</span></h2>
                 <div class="slide_item">
                     <ul>
-                        {% for product in ranked_products %} 
+                        {% for product in lank_products %} 
                             <li>
                                 <a href="{% url 'shop:product_detail' product.pk %}">
                                     {% thumbnail product.image "200x200" crop="center" as im %}

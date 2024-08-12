@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load static %}
+    <link rel="stylesheet" type='text/css' href="{% static 'shop/left_side.css' %}">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-space">
+            <header class="page-header wrapper">
+                <a href="/">
+                        <img src="{% static 'shop/images/weniv.jpg' %}" alt="Logo">
+                </a>
+            </header>
+        </div>
+        <div class="sidebar-content">
+            <div class="account">
+                <ul>
+                    {% if user.is_active %}
+                    <li>
+                        <form action="{% url 'logout' %}" method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer; padding: 0;">
+                                LOGOUT
+                            </button>
+                        </form>
+                    </li>
+                        <li><a href="{% url 'shop:cart' user.pk %}">CART</a></li>
+
+                    {% else %}
+                        <li><a href="{% url 'login' %}">LOGIN</a></li>
+                        <li><a href="{% url 'signup' %}">SIGN UP</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="side-category">
+                <ul>
+                    {% for category in categories %}
+                        <li><a href="{% url 'shop:show_category' category.pk %}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
