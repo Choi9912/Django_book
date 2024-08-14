@@ -39,7 +39,7 @@ def index(request):
 
 def show_category(request, category_id):
     categories = Category.objects.all()
-    category = Category.objects.get(id=category_id)
+    category = categories.get(id=category_id)
 
     products = Product.objects.filter(category=category)
     sorted_products = products.order_by('pub_date')
