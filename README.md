@@ -7,4 +7,3 @@
 | 상품 | 장바구니 | 결제기능 |
 | --- | --- | --- |
 | ![product_detail](https://github.com/user-attachments/assets/0f3132c6-65a1-42dd-abd2-22bc4978df85) | ![cart](https://github.com/user-attachments/assets/b406fe48-9779-454f-b3fd-7473637691e4) | ![pay](https://github.com/user-attachments/assets/9ee50f58-58ac-4e72-898a-90984ea1e0bb) |
-|
