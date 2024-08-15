@@ -10,7 +10,6 @@ from shop.forms import OrderForm
 from shop.models import Cart, Category, Product
 
 
-# 아직 사용하지 않는 부분입니다.
 def user_verification(func):
     def wrap(request, *args, **kwargs):
         session_user = User.objects.get(pk=kwargs['pk'])
@@ -45,13 +44,9 @@ def show_category(request, category_id):
     sorted_products = products.order_by('pub_date')
     ranked_products = products.order_by('-hit')[:4]
     
-    try:
-        page = int(request.GET.get('page', 1))
-    except ValueError:
-        page = 1
-    
+    page = int(request.GET.get('page', 1))
     paginator = Paginator(sorted_products, 8)
-    products = paginator.get_page(page)
+    products = paginator.page(page)
 
     context = {
         "categories": categories,
@@ -88,13 +83,9 @@ def view_cart(request, pk):
     cart_list = Cart.objects.filter(user=user)
     item_price_sum = sum(map(lambda item: item.quantity * item.products.price, cart_list))
 
-    try:
-        page = int(request.GET.get('page', 1))
-    except ValueError:
-        page = 1
-    
+    page = int(request.GET.get('page', 1))
     paginator = Paginator(cart_list, 10)
-    cart = paginator.get_page(page)
+    cart = paginator.page(page)
 
     context = {
         "user": user,
@@ -172,3 +163,5 @@ def pay(request, pk):
         }
 
         return render(request, 'shop/order_pay.html', context)
+    
+    
