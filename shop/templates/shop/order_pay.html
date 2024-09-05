@@ -1,4 +1,3 @@
-
 {% extends "shop/../accounts/base.html" %}
 
 {% block title %}
@@ -9,7 +8,7 @@
     {% load static  %}
     {% load thumbnail %}
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
-    <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-x.y.z.js"></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
 
     <link rel="stylesheet" type='text/css' href="{% static 'shop/style.css' %}">
     <div class="content">
@@ -35,23 +34,31 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for item in cart_items %}
                 <tr>
                     <td class="thumb">
-                        {% thumbnail product.image "100x100" crop="center" as im %}
-                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ im.name }}">
+                        {% thumbnail item.products.image "100x100" crop="center" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ item.products.name }}">
                         {% endthumbnail %}
                     </td>
                     <td class="product">
-                        {{ product.name }}
+                        {{ item.products.name }}
                     </td>
                     <td class="quantity">
-                        {{ quantity }}
+                        {{ item.quantity }}
                     </td>
                     <td>
-                        {{ product.price }}
+                        {{ item.products.price }}
                     </td>
                 </tr>
+                {% endfor %}
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                        <td><strong>{{ total_amount }}</strong></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 
@@ -64,36 +71,52 @@
                     </table>
                     {{ initial }}
                 </div>
-                <input type="submit" class="btn" value="결제하기">
+                <input type="button" class="btn" id="payment-button" value="결제하기">
             </form>
         </div>
     </div>
 {% endblock content %}
 
 {% block extra_body %}
-    <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js"></script>
     <script>
         $(function() {
-            var $form = $('#order-form');
-            var params = {
-                name: $form.find('[name=name]').val(),
-                amount: $form.find('[name=amount]').val(),
-            };
+            var IMP = window.IMP;
             IMP.init('{{ iamport_shop_id }}');
-            IMP.request_pay(params, function(response_data) {
-                console.log('response_data :', response_data);
-                if ( !response_data.success ) {
-                    alert(response_data.error_msg + "(" + response_data.error_code + ")");
-                    location.href = '{% url "shop:index" %}';
-                }
-                else {
-                    $.each(response_data, function(key, vlaue) {
-                        $form.find("input[name=" + key + "]").val(value);
-                    });
-                    $form.submit();
-                }
+            
+            $('#payment-button').click(function(e) {
+                e.preventDefault();
+                var $form = $('#order-form');
+                var params = {
+                    pg: 'inicis',
+                    pay_method: 'card',
+                    merchant_uid: 'merchant_' + new Date().getTime(),
+                    name: '장바구니 결제',
+                    amount: {{ total_amount }},
+                    buyer_email: '{{ user.email }}',
+                    buyer_name: '{{ user.username }}',
+                    buyer_tel: '010-0000-0000',  // 실제 사용자 전화번호로 변경해야 함
+                    buyer_addr: '서울특별시 강남구 삼성동',  // 실제 사용자 주소로 변경해야 함
+                    buyer_postcode: '123-456',  // 실제 사용자 우편번호로 변경해야 함
+                };
+                
+                IMP.request_pay(params, function(response_data) {
+                    console.log('response_data :', response_data);
+                    if ( !response_data.success ) {
+                        alert(response_data.error_msg + "(" + response_data.error_code + ")");
+                        location.href = '{% url "shop:index" %}';
+                    }
+                    else {
+                        $.each(response_data, function(key, value) {
+                            $form.append($('<input>').attr({
+                                type: 'hidden',
+                                name: key,
+                                value: value
+                            }));
+                        });
+                        $form.submit();
+                    }
+                });
             });
         });
     </script>
-
 {% endblock %}

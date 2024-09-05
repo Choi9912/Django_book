@@ -19,6 +19,7 @@ def user_verification(func):
             return HttpResponseForbidden()
 
         return func(request, *args, **kwargs)
+
     return wrap
 
 
@@ -38,12 +39,12 @@ def index(request):
 
 def show_category(request, category_id):
     categories = Category.objects.all()
-    category = categories.get(id=category_id)
+    category = Category.objects.get(id=category_id)
 
     products = Product.objects.filter(category=category)
     sorted_products = products.order_by('pub_date')
     ranked_products = products.order_by('-hit')[:4]
-    
+
     page = int(request.GET.get('page', 1))
     paginator = Paginator(sorted_products, 8)
     products = paginator.page(page)
@@ -136,10 +137,13 @@ def pay(request, pk):
         user = request.user
         categories = Category.objects.all()
 
+        # 총 가격 계산
+        total_amount = product.price * quantity
+
         initial = {
             "name": product.name,
-            "amount": product.price,
-            "quantity": quantity
+            "amount": total_amount,  # 총 가격으로 변경
+            "quantity": quantity,
         }
 
         form = OrderForm(request.POST, initial=initial)
@@ -148,20 +152,57 @@ def pay(request, pk):
             order.user = user
             order.quantity = quantity
             order.products = product
+            order.amount = total_amount  # 총 가격 저장
             order.save()
             return redirect("shop:order_list", user.pk)
         else:
             form = OrderForm(initial=initial)
 
         context = {
-            'form': form,
-            'quantity': quantity,
-            'iamport_shop_id': 'iamport',
-            'user': user,
-            'product': product,
-            'categories': categories,
+            "form": form,
+            "quantity": quantity,
+            "iamport_shop_id": "iamport",
+            "user": user,
+            "product": product,
+            "categories": categories,
+            "total_amount": total_amount,  # 컨텍스트에 총 가격 추가
         }
 
-        return render(request, 'shop/order_pay.html', context)
-    
-    
+        return render(request, "shop/order_pay.html", context)
+
+
+@login_required
+def pay_cart(request, pk):
+    user = request.user
+    cart_items = Cart.objects.filter(user=user).select_related("products")
+    total_amount = sum(item.quantity * item.products.price for item in cart_items)
+    categories = Category.objects.all()
+
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = user
+            order.amount = total_amount
+            order.save()
+
+            for item in cart_items:
+                order.products.add(item.products)
+                order.quantity += item.quantity
+
+            order.save()
+            cart_items.delete()
+            return redirect("shop:order_list", user.pk)
+    else:
+        form = OrderForm(initial={"amount": total_amount})
+
+    context = {
+        "form": form,
+        "cart_items": cart_items,
+        "total_amount": total_amount,
+        "iamport_shop_id": "iamport",
+        "user": user,
+        "categories": categories,
+    }
+
+    return render(request, "shop/order_pay.html", context)

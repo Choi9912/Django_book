@@ -66,15 +66,25 @@
                 </table>
             </div>
 
+            <form action="{% url 'shop:delete_cart' user.pk %}" method="POST">
+            <!-- 기존 카트 내용 표시 부분 -->
+
             <div class="order_option">
                 <span class="left">
                     <span class="text">
                         선택상품을
                     </span>
                     <button type="submit" name="delete_cart" value="delete_cart">삭제하기</button>
-                    {% csrf_token %}
                 </span>
-            </div>
+                {% csrf_token %}
+
+            <!-- 결제 버튼 추가 -->
+                <span class="right">
+                        <button type="button" class="pay-button" onclick="location.href='{% url 'shop:pay_cart' user.pk %}'">결제하기
+                    </button>
+                    </span>
+                </div>
+            </form>
         </form>
         <!-- pagination nav -->
         <div class="board_paging">
