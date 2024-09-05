@@ -12,7 +12,7 @@ from shop.models import Cart, Category, Product
 
 def user_verification(func):
     def wrap(request, *args, **kwargs):
-        session_user = User.objects.get(pk=kwargs['pk'])
+        session_user = User.objects.get(pk=kwargs["pk"])
         request_user = request.user
 
         if session_user != request_user:
@@ -26,7 +26,7 @@ def user_verification(func):
 def index(request):
     products = Product.objects.order_by("-pub_date")
     categories = Category.objects.all()
-    ranked_products = products.order_by('-hit')[:4]
+    ranked_products = products.order_by("-hit")[:4]
 
     context = {
         "products": products,
@@ -42,10 +42,10 @@ def show_category(request, category_id):
     category = Category.objects.get(id=category_id)
 
     products = Product.objects.filter(category=category)
-    sorted_products = products.order_by('pub_date')
-    ranked_products = products.order_by('-hit')[:4]
+    sorted_products = products.order_by("pub_date")
+    ranked_products = products.order_by("-hit")[:4]
 
-    page = int(request.GET.get('page', 1))
+    page = int(request.GET.get("page", 1))
     paginator = Paginator(sorted_products, 8)
     products = paginator.page(page)
 
@@ -71,31 +71,31 @@ def product_detail(request, product_id):
         "quantity_list": quantity_list,
         "product": product,
         "category": product.category,
-        "categories": categories
+        "categories": categories,
     }
 
-    return render(request, 'shop/product_detail.html', context)
+    return render(request, "shop/product_detail.html", context)
 
 
 @login_required
 def view_cart(request, pk):
-    categories = Category.objects.all()
     user = User.objects.get(pk=pk)
     cart_list = Cart.objects.filter(user=user)
-    item_price_sum = sum(map(lambda item: item.quantity * item.products.price, cart_list))
+    item_price_sum = sum(
+        map(lambda item: item.quantity * item.products.price, cart_list)
+    )
 
-    page = int(request.GET.get('page', 1))
+    page = int(request.GET.get("page", 1))
     paginator = Paginator(cart_list, 10)
-    cart = paginator.page(page)
+    cart = paginator.get_page(page)
 
     context = {
         "user": user,
         "cart": cart,
-        "categories": categories,
         "item_price_sum": item_price_sum,
     }
 
-    return render(request, 'shop/cart.html', context)
+    return render(request, "shop/cart.html", context)
 
 
 @login_required
