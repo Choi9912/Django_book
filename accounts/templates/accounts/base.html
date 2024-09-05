@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'accounts/base.css' %}" type="text/css">
+</head>
+<body>
+
+<div id="wrap">
+    <div class="left-wrap">
+        {% block left_side %} {% include 'shop/left_side.html' %} {% endblock left_side %}
+    </div>
+
+    <div class="right-wrap">
+        {% block content %} {% endblock content %}
+    </div>
+</div>
+
+{% block extra_body %}{% endblock %}
+
+</body>
+</html>
