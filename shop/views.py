@@ -38,7 +38,6 @@ def index(request):
 
 
 def show_category(request, category_id):
-    categories = Category.objects.all()
     category = Category.objects.get(id=category_id)
 
     products = Product.objects.filter(category=category)
@@ -50,7 +49,6 @@ def show_category(request, category_id):
     products = paginator.page(page)
 
     context = {
-        "categories": categories,
         "category": category,
         "products": products,
         "ranked_products": ranked_products,
