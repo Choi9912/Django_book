@@ -3,24 +3,14 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden
 
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from shop.forms import OrderForm
 from shop.models import Cart, Category, Product
+from django.contrib.auth import get_user_model
 
 
-def user_verification(func):
-    def wrap(request, *args, **kwargs):
-        session_user = User.objects.get(pk=kwargs["pk"])
-        request_user = request.user
-
-        if session_user != request_user:
-            return HttpResponseForbidden()
-
-        return func(request, *args, **kwargs)
-
-    return wrap
+User = get_user_model()
 
 
 def index(request):

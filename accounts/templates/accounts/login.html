@@ -1,7 +1,16 @@
 {% load static %}
 {% load i18n %}
 
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}로그인{% endblock %}</title>
+    <link rel="stylesheet" type='text/css' href="{% static 'accounts/signup.css' %}">
+</head>
+
+<body>
 <link rel="stylesheet" type='text/css' href="{% static 'accounts/login.css' %}">
 
     <div id="wrap">
@@ -15,4 +24,5 @@
             <p>{% trans "계정이 없으신가요?" %} <a href="{% url 'signup' %}">{% trans "회원가입" %}</a></p>
         </div>
     </div>
-{% endblock %}
+</body>
+</html>
