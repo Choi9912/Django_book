@@ -29,10 +29,6 @@
                             <td>PRICE</td>
                             <td><strong>{{ product.price }} 원</strong></td>
                         </tr>
-                        <tr>
-                            <td>POINT</td>
-                            <td><strong>{{ point }} 원</strong></td>
-                        </tr>
                     </table>
                 <div class="payment">
                     <div class="btnArea">
@@ -61,12 +57,7 @@
                     {% endif %}
                 </div>
                 </div>
-                {% if message %}
-                    <div>
-                        {{ message }}
-                        <a href="{% url 'shop:cart' user.pk %}">장바구니로 이동</a>
-                    </div>
-                {% endif %}
+
             </div>
         </div>
     </div>
